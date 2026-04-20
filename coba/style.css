@@ -1,0 +1,908 @@
+/* ================================================================
+   PORTFOLIO — M. Radja Ilyasa
+   style.css
+
+   Struktur file ini mengikuti urutan dari atas ke bawah:
+   1. Reset & CSS Variables
+   2. Base / Global
+   3. Navbar
+   4. Hero
+   5. About
+   6. Project
+   7. Contact
+   8. Footer
+   9. Animasi (fade-in)
+   10. Media Queries (responsiveness)
+   ================================================================ */
+
+
+/* ================================================================
+   1. RESET & CSS VARIABLES
+   ================================================================
+
+   * { box-sizing: border-box } adalah salah satu reset paling penting.
+   Secara default, browser menghitung width TANPA padding dan border,
+   jadi kalau kamu set width: 100px dan tambah padding: 20px,
+   elemennya jadi 140px — tidak terduga. Dengan border-box,
+   padding dan border sudah TERMASUK dalam width yang kamu tentukan.
+*/
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Warna utama — ubah nilai di sini kalau mau ganti tema */
+  --bg-main:       #0f172a;
+  --bg-secondary:  #1e293b;
+  --bg-tertiary:   #263148;
+  --text-main:     #e2e8f0;
+  --text-secondary: #94a3b8;
+  --accent:        #38bdf8;
+  --accent-hover:  #0ea5e9;  /* Versi lebih gelap dari accent, untuk hover state */
+  --border:        #2d3f5e;
+
+  /* Ukuran dan spasi yang konsisten */
+  --nav-height:    64px;
+  --section-pad:   80px;
+  --radius:        12px;
+  --radius-sm:     8px;
+
+  /* Transisi default — kita pakai variabel supaya mudah diubah satu tempat */
+  --transition:    0.3s ease;
+}
+
+
+/* ================================================================
+   2. BASE / GLOBAL
+   ================================================================ */
+
+html {
+  /* scroll-behavior: smooth membuat klik anchor link (#about, #project)
+     bergerak dengan animasi halus, bukan langsung lompat */
+  scroll-behavior: smooth;
+
+  /* scroll-padding-top: kompensasi tinggi navbar.
+     Tanpa ini, ketika user klik "About", kontennya akan tertutup
+     oleh navbar karena navbar sekarang sticky. */
+  scroll-padding-top: var(--nav-height);
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-main);
+  color: var(--text-main);
+
+  /* line-height 1.6 membuat teks lebih nyaman dibaca */
+  line-height: 1.6;
+}
+
+/* Semua gambar secara default tidak boleh melebihi container-nya */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Link dasar — kita override tiap komponen sesuai kebutuhan */
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+
+/* ================================================================
+   3. NAVBAR
+   ================================================================
+
+   Kenapa position: sticky dan bukan position: fixed?
+   - fixed: elemen "keluar" dari document flow, lebar tidak mengikuti parent,
+     dan konten di bawahnya tidak tahu navbar ada, jadi bisa tertimpa.
+   - sticky: elemen tetap dalam document flow. Dia berperilaku normal
+     sampai kamu scroll melewatinya, lalu "menempel" di posisi top: 0.
+     Jauh lebih mudah dikelola.
+*/
+#navbar {
+  position: sticky;
+  top: 0;
+  /* z-index tinggi supaya navbar selalu di atas semua konten */
+  z-index: 1000;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5%;
+
+  /* Background dengan sedikit transparansi dan blur — efek "frosted glass".
+     Ini memberi kesan modern dan user masih bisa melihat konten di belakangnya. */
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); /* prefix untuk Safari */
+  border-bottom: 1px solid var(--border);
+
+  /* Transisi shadow untuk saat user mulai scroll — ditambahkan lewat JS */
+  transition: box-shadow var(--transition);
+}
+
+/* Class ini ditambahkan oleh JS ketika user scroll ke bawah */
+#navbar.scrolled {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+#navbar ul {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+}
+
+#navbar a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 99px; /* radius besar = bentuk pill */
+  transition: color var(--transition), background var(--transition);
+}
+
+#navbar a:hover {
+  color: var(--text-main);
+  background: var(--bg-tertiary);
+}
+
+/* Link aktif — class ini ditambahkan oleh JS berdasarkan section yang terlihat */
+#navbar a.active {
+  color: var(--accent);
+  background: rgba(56, 189, 248, 0.1);
+}
+
+
+/* ================================================================
+   4. HERO
+   ================================================================ */
+
+#hero {
+  /* min-height: 100svh — svh (small viewport height) adalah unit modern
+     yang lebih andal di mobile karena memperhitungkan address bar browser.
+     vh biasa bisa bermasalah di HP karena address bar browser muncul/hilang. */
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding: 0 10%;
+}
+
+.hero-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+}
+
+.hero-text {
+  /* flex: 1 artinya elemen ini mengambil semua sisa ruang yang tersedia */
+  flex: 1;
+}
+
+.intro {
+  color: var(--accent);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.name {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  /* clamp(minimum, preferred, maximum) adalah cara modern untuk typography
+     yang responsif tanpa media query. Di sini:
+     - minimum: 2rem (tidak akan lebih kecil dari ini)
+     - preferred: 5vw (5% dari lebar viewport — mengikuti ukuran layar)
+     - maximum: 3.5rem (tidak akan lebih besar dari ini)
+  */
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.role {
+  font-size: clamp(1.1rem, 3vw, 1.6rem);
+  color: var(--accent);
+  font-weight: 500;
+  min-height: 2em; /* Mencegah layout shift saat teks berubah oleh typing effect */
+  margin-bottom: 32px;
+}
+
+/* Kursor berkedip pada typing effect */
+.role span::after {
+  content: '|';
+  animation: blink 0.75s step-end infinite;
+  margin-left: 2px;
+  color: var(--accent);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.btn-resume {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: var(--accent);
+  color: #0f172a; /* Teks gelap di atas background terang — lebih mudah dibaca */
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 99px;
+  transition: background var(--transition), transform var(--transition),
+              box-shadow var(--transition);
+}
+
+.btn-resume:hover {
+  background: var(--accent-hover);
+  color: #0f172a;
+  transform: translateY(-2px); /* Efek "terangkat" saat hover */
+  box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+}
+
+.btn-resume:active {
+  /* Saat diklik, efek balik ke bawah sedikit — memberi feel seperti tombol fisik */
+  transform: translateY(0);
+}
+
+.hero-image {
+  flex-shrink: 0; /* Gambar tidak menyusut ketika ruang sempit */
+}
+
+.hero-image img {
+  width: 280px;
+  height: 280px;
+  object-fit: cover; /* Gambar mengisi container tanpa distorsi */
+  border-radius: 50%; /* Lingkaran penuh */
+  border: 3px solid var(--border);
+  filter: grayscale(100%);
+  transition: filter 0.5s ease, border-color var(--transition),
+              box-shadow var(--transition);
+}
+
+.hero-image img:hover {
+  filter: grayscale(0%);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.15);
+}
+
+
+/* ================================================================
+   5. ABOUT
+   ================================================================ */
+
+#about {
+  padding: var(--section-pad) 10%;
+  border-top: 1px solid var(--border);
+}
+
+.about-container {
+  display: flex;
+  gap: 50px;
+  align-items: flex-start;
+}
+
+.about-text {
+  flex: 1; /* Mengambil semua sisa ruang */
+}
+
+.about-text h2 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  margin-bottom: 20px;
+  position: relative;
+}
+
+/* Garis aksen di bawah judul "About Me" */
+.about-text h2::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin-top: 10px;
+}
+
+.about-text p {
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+}
+
+.about-text p strong {
+  color: var(--text-main);
+}
+
+.about-highlight {
+  display: flex;
+  gap: 32px;
+  margin-top: 32px;
+  flex-wrap: wrap; /* Bisa turun baris kalau ruang sempit */
+}
+
+.about-highlight div {
+  text-align: center;
+}
+
+.about-highlight h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.about-highlight span {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Card "What I Do" */
+.about-card {
+  background: var(--bg-secondary);
+  padding: 28px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+
+  /* flex-shrink: 0 supaya card tidak menyusut */
+  flex-shrink: 0;
+  width: 220px;
+
+  /* Garis aksen di sisi kiri card */
+  border-left: 3px solid var(--accent);
+}
+
+.about-card h3 {
+  font-size: 1rem;
+  margin-bottom: 16px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.about-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about-card li {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: color var(--transition);
+}
+
+.about-card li:hover {
+  color: var(--text-main);
+}
+
+
+/* ================================================================
+   6. PROJECT
+   ================================================================ */
+
+#project {
+  padding: var(--section-pad) 10%;
+  border-top: 1px solid var(--border);
+}
+
+.section-title {
+  text-align: center;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: 48px;
+}
+
+/* --- Featured Project --- */
+.featured-project {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 48px;
+  cursor: pointer;
+  transition: border-color var(--transition), transform var(--transition),
+              box-shadow var(--transition);
+}
+
+.featured-project:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Gambar di featured project mengambil setengah lebar */
+.featured-project img {
+  width: 45%;
+  height: 280px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.featured-content {
+  padding: 32px 32px 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Badge "Paid Project" */
+.project-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(56, 189, 248, 0.1);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 99px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.featured-content h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.featured-content p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+/* Teks "View Live →" di bawah deskripsi */
+.project-link-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 4px;
+  transition: gap var(--transition);
+}
+
+.featured-project:hover .project-link-hint,
+.project-card:hover .project-link-hint {
+  gap: 10px; /* Arrow bergeser ke kanan saat hover — detail kecil tapi terasa */
+}
+
+/* --- Project Grid --- */
+.project-grid {
+  display: grid;
+  /* auto-fit + minmax: kolom otomatis menyesuaikan.
+     Kalau ada ruang untuk 2 kolom (masing-masing min 280px), tampil 2 kolom.
+     Kalau tidak cukup (layar kecil), otomatis jadi 1 kolom. */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.project-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden; /* Gambar tidak keluar dari border-radius */
+  cursor: pointer;
+  transition: border-color var(--transition), transform var(--transition),
+              box-shadow var(--transition);
+}
+
+.project-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Project card tanpa link — tidak ada efek hover dan cursor biasa */
+.project-card--no-link {
+  cursor: default;
+}
+
+.project-card--no-link:hover {
+  border-color: var(--border);
+  transform: none;
+  box-shadow: none;
+}
+
+.project-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.project-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.project-info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.project-info p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+/* Badge "Coming Soon" */
+.project-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  border-radius: 99px;
+  width: fit-content;
+}
+
+
+/* ================================================================
+   7. SKILLS
+   ================================================================
+
+   Struktur visual:
+   - Tiap kategori (.skills-group) punya judul kategori + grid kartu
+   - Tiap kartu (.skill-card) berisi: ikon devicon, nama skill, badge level
+   - Tiga warna badge level: hijau (advanced), biru (intermediate),
+     abu-abu (beginner), dan oranye beranimasi (in progress/learning)
+*/
+
+#skills {
+  padding: var(--section-pad) 10%;
+  border-top: 1px solid var(--border);
+}
+
+/* Setiap kelompok kategori punya jarak vertikal antar satu sama lain */
+.skills-group {
+  margin-bottom: 48px;
+}
+
+.skills-group:last-child {
+  margin-bottom: 0;
+}
+
+.skills-category-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+
+  /* Garis dekoratif di samping judul kategori */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Garis horizontal setelah teks judul kategori */
+.skills-category-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Grid kartu skill — auto-fit supaya otomatis menyesuaikan layar */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+/* Kartu skill individual */
+.skill-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  transition: transform var(--transition), border-color var(--transition),
+              box-shadow var(--transition);
+}
+
+.skill-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Ikon Devicon — ukuran dan warna */
+.skill-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+/* Devicon GitHub tidak punya class "colored" karena logonya hitam/putih.
+   Kita set warna secara manual supaya terlihat di dark background. */
+.devicon-github-original {
+  color: var(--text-main);
+}
+
+.skill-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+/* ---- Badge level ---- */
+.skill-level {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Advanced — hijau: menyiratkan "matang, siap pakai" */
+.skill-level--advanced {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+/* Intermediate — biru accent: menyiratkan "bisa, sedang berkembang" */
+.skill-level--intermediate {
+  background: rgba(56, 189, 248, 0.1);
+  color: var(--accent);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+/* Beginner — abu-abu: jujur, tidak melebih-lebihkan */
+.skill-level--beginner {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* In Progress — oranye dengan animasi pulse:
+   efek berkedip halus ini secara visual "bercerita" bahwa
+   skill ini sedang aktif dalam proses, bukan stagnan. */
+.skill-level--learning {
+  background: rgba(251, 146, 60, 0.12);
+  color: #fb923c;
+  border: 1px solid rgba(251, 146, 60, 0.3);
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* Kartu "currently learning" punya border kiri oranye sebagai aksen tambahan */
+.skill-card--learning {
+  border-left: 3px solid rgba(251, 146, 60, 0.5);
+}
+
+.skill-card--learning:hover {
+  border-color: #fb923c;
+}
+
+
+/* ================================================================
+   8. CONTACT (sebelumnya nomor 7)
+   ================================================================ */
+
+#contact {
+  padding: var(--section-pad) 10%;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.contact-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  max-width: 480px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+
+.contact-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--bg-secondary);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  transition: background var(--transition), border-color var(--transition),
+              color var(--transition), transform var(--transition);
+}
+
+.contact-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.contact-btn i {
+  font-size: 1rem;
+}
+
+
+/* ================================================================
+   9. FOOTER (sebelumnya nomor 8)
+   ================================================================ */
+
+footer {
+  text-align: center;
+  padding: 32px 10%;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+footer p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+footer strong {
+  color: var(--text-main);
+}
+
+.footer-sub {
+  font-size: 0.75rem;
+  color: var(--bg-tertiary);
+}
+
+
+/* ================================================================
+   10. ANIMASI FADE-IN (sebelumnya nomor 9)
+   ================================================================ */
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  /* transition pada opacity dan transform saja — lebih efisien
+     karena browser bisa menganimasikan ini di GPU */
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ================================================================
+   11. MEDIA QUERIES — RESPONSIVENESS (sebelumnya nomor 10)
+   ================================================================
+
+   Pendekatan: Desktop-first untuk proyek ini (karena CSS dasarnya
+   sudah ditulis untuk desktop), lalu kita override untuk layar kecil.
+
+   Breakpoint yang digunakan:
+   - 992px: Layar medium (tablet landscape)
+   - 768px: Tablet portrait
+   - 480px: HP besar
+*/
+
+/* --- Tablet landscape dan di bawahnya --- */
+@media (max-width: 992px) {
+  .featured-project {
+    flex-direction: column; /* Gambar di atas, teks di bawah */
+  }
+
+  .featured-project img {
+    width: 100%;
+    height: 240px;
+  }
+
+  .featured-content {
+    padding: 24px;
+  }
+}
+
+/* --- Tablet portrait dan di bawahnya --- */
+@media (max-width: 768px) {
+  /* Kurangi padding section supaya tidak terlalu besar di HP */
+  :root {
+    --section-pad: 60px;
+  }
+
+  /* Hero: teks di atas, gambar di bawah */
+  .hero-container {
+    flex-direction: column-reverse;
+    /* column-reverse: gambar tetap di atas secara visual (karena reverse),
+       tapi di HTML teks ada dulu — ini lebih baik untuk screen reader */
+    text-align: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .hero-image img {
+    width: 200px;
+    height: 200px;
+  }
+
+  /* About: teks di atas, card di bawah */
+  .about-container {
+    flex-direction: column;
+  }
+
+  .about-card {
+    width: 100%; /* Card mengambil lebar penuh */
+  }
+
+  .about-highlight {
+    justify-content: center;
+  }
+
+  /* Padding section lebih kecil di samping */
+  #hero,
+  #about,
+  #project,
+  #contact {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+}
+
+/* --- HP kecil --- */
+@media (max-width: 480px) {
+  /* Navbar: tampilkan item lebih rapat */
+  #navbar ul {
+    gap: 2px;
+  }
+
+  #navbar a {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  /* Tombol resume lebar penuh di HP kecil */
+  .btn-resume {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-image img {
+    width: 160px;
+    height: 160px;
+  }
+
+  /* Featured project: kurangi padding */
+  .featured-content {
+    padding: 16px;
+  }
+}
